@@ -91,12 +91,22 @@
       </form>
     </div>
 
+    <div class="p-8 mb-8 bg-light-grey rounded-md shadow-lg">
+      <label for="workout-name" class="mb-1 text-sm text-at-light-green">My Progress</label>
+      <div v-if="progressImages.length != 0" class="flex flex-wrap justify-between">
+        <img class="w-2/5 h-auto m-1" v-for="(item, index) in progressImages" :key="index" :src="'https://wyntpguqruuohlkekssl.supabase.co/storage/v1/object/public/workoutapp/' + userId + '/wrkt-' + idWorkout + '/' +item.name" alt="">
+      </div>
+      <div v-else class="text-center">
+        <p>No Progress Yet</p>
+      </div>
+    </div>
+
     <div class="p-8 flex items-start bg-light-grey rounded-md shadow-lg">
       <!-- Form -->
       <form @submit.prevent="createProgress" class="flex flex-col gap-y-5 w-full">
         <!-- Workout Name -->
         <div class="flex flex-col">
-          <label for="workout-name" class="mb-1 text-sm text-at-light-green">My Progress</label>
+          <label for="workout-name" class="mb-1 text-sm text-at-light-green">Upload Progress</label>
           <input type="file" @change="uploadImage">
         </div>
         <button class="py-2 px-5 font-semibold bg-green-500 rounded-lg text-white" type="submit">Update Progress</button>
@@ -107,7 +117,8 @@
         <button class="py-2 px-5 font-semibold bg-green-500 rounded-lg text-white" :hidden="!editable" type="submit">Update Workout</button>
       </form>
     </div>
-    <img src="https://wyntpguqruuohlkekssl.supabase.co/storage/v1/object/sign/workoutapp/074709e8-1ca6-46e7-9d17-a15b823bf2b8/1692287563288?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ3b3Jrb3V0YXBwLzA3NDcwOWU4LTFjYTYtNDZlNy05ZDE3LWExNWI4MjNiZjJiOC8xNjkyMjg3NTYzMjg4IiwiaWF0IjoxNjkyMzY2OTk0LCJleHAiOjE3MjM5MDI5OTR9.J-2vjxHVseu2Thu3HDUupRkX7bWN5Mf4SwtVFqZPW9s&t=2023-08-18T13%3A56%3A34.756Z" alt="">
+    
+    <!-- <img src="https://wyntpguqruuohlkekssl.supabase.co/storage/v1/object/sign/workoutapp/074709e8-1ca6-46e7-9d17-a15b823bf2b8/1692287563288?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ3b3Jrb3V0YXBwLzA3NDcwOWU4LTFjYTYtNDZlNy05ZDE3LWExNWI4MjNiZjJiOC8xNjkyMjg3NTYzMjg4IiwiaWF0IjoxNjkyMzY2OTk0LCJleHAiOjE3MjM5MDI5OTR9.J-2vjxHVseu2Thu3HDUupRkX7bWN5Mf4SwtVFqZPW9s&t=2023-08-18T13%3A56%3A34.756Z" alt=""> -->
   </div>
 </template>
 
@@ -129,6 +140,10 @@ export default {
     const editable = ref(false)
     const errorMsg = ref(null)
     const file = ref(null)
+    const progressImages = ref()
+    const userId = ref()
+
+    userId.value = store.methods.getUserId()
 
     // Get current Id of route
     const idWorkout = router.currentRoute.value.params.id
@@ -232,7 +247,7 @@ export default {
         const {error} = await supabase
         .storage
         .from('workoutapp')
-        .upload(store.methods.getUserId() + '/' + Date.now(), file.value[0])
+        .upload(store.methods.getUserId() + '/wrkt-' + idWorkout + '/' + Date.now(), file.value[0])
         if (error) throw error
       } catch (error) {
         errorMsg.value = error.message
@@ -242,10 +257,22 @@ export default {
       }
     }
 
-    const { data } = supabase.storage.from('workoutapp').getPublicUrl('074709e8-1ca6-46e7-9d17-a15b823bf2b8/1692287563288')
-    console.log(data)
-
-    return {workout, dataLoaded, editable, errorMsg, addExercise, deleteWorkout, editMode, deleteExercise, updateWorkout, uploadImage, createProgress};
+    const getListProgress = async() => {
+      const {data} = await supabase
+    .storage.from('workoutapp').list(store.methods.getUserId() + '/wrkt-' + idWorkout)
+    progressImages.value = data
+    }
+    
+    getListProgress()
+    return {workout, userId, dataLoaded, editable, errorMsg, idWorkout, addExercise, progressImages, deleteWorkout, editMode, deleteExercise, updateWorkout, uploadImage, createProgress};
   },
+  // mounted(){
+  //   const getListProgress = async() => {
+  //     const {data} = await supabase
+  //   .storage.from('workoutapp').list('074709e8-1ca6-46e7-9d17-a15b823bf2b8/wrkt-12')
+  //   this.progressImages.value = data
+  //   }
+  //   getListProgress()
+  // }
 };
 </script>
