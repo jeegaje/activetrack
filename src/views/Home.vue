@@ -71,7 +71,7 @@
           <h2 class="font-semibold mb-5">{{ item.name }}</h2>
           <p>{{ item.description }}</p>
           <p>Price : {{ item.price }}</p>
-          <button class="bg-green-500 px-10 py-2 bg-green-500 rounded-lg font-semibold text-white mt-5" @click="makeOrder(item.name, item.price)">Beli Sekarang</button>
+          <button class="bg-green-500 px-10 py-2 bg-green-500 rounded-lg font-semibold text-white mt-5" @click="makeOrder(item.name, item.price, item.id)">Beli Sekarang</button>
         </div>
       </div>
     </div>
@@ -81,6 +81,10 @@
       <div class="flex flex-col">
         <div class="p-5 bg-white m-1 rounded-lg" v-for="(item, index) in orders" :key="index">
           <p>Order Id :: {{ item.id }}</p>
+          <div class="my-2">
+            <p class="font-semibold">{{ item.product_id.name }}</p>
+            <p class="">{{ item.product_id.price }}</p>
+          </div>
           <p v-if="item.transaction_history.transaction_status == 'pending'" >Charge Now !! <br>VA Number :: {{ item.transaction_history.va_numbers[0].va_number }} {{ item.transaction_history.va_numbers[0].bank }}</p>
           <p v-if="item.transaction_history.transaction_status == 'settlement'" >Charge Success !!</p>
 
@@ -143,7 +147,8 @@ export default {
       try{
         const {data, error} = await supabase
         .from('orders')
-        .select('*')
+        .select('*,product_id(*)')
+        .eq('buyer_id', store.methods.getUserId())
         if (error) throw error
         orders.value = data
       } catch (error) {
@@ -155,7 +160,7 @@ export default {
     }
     
     console.log(store.methods.getUser())
-    const makeOrder = async(name, price) => {
+    const makeOrder = async(name, price, itemId) => {
       try{
         const {data, error} =  await axios.post('https://active-track-be.vercel.app/make-transaction', {
           payment_type: "bank_transfer",
@@ -164,6 +169,7 @@ export default {
               order_id: uuidv4()
           },
           customer_details: {
+              id: store.methods.getUserId(),
               email: store.methods.getUser().email,
               first_name: "budi",
               last_name: "utomo",
@@ -171,7 +177,7 @@ export default {
           },
           item_details: [
           {
-            id: "item01",
+            id: itemId,
             price: price,
             quantity: 1,
             name: name
