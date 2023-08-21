@@ -64,12 +64,24 @@
         </div> 
     </div>
 </section> -->
+    <div class="container p-8 mb-8 bg-light-grey rounded-md shadow-lg">
+      <h1 class="mb-1 text-lg font-bold text-at-light-green">Active Track Store</h1>
+      <div class="flex">
+        <div class="p-5 flex-1 bg-white m-1 rounded-lg" v-for="(item, index) in products" :key="index">
+          <h2 class="font-semibold mb-5">{{ item.name }}</h2>
+          <p>{{ item.description }}</p>
+          <p>Price : {{ item.price }}</p>
+          <button class="bg-green-500 px-10 py-2 bg-green-500 rounded-lg font-semibold text-white mt-5" @click="makeOrder">Beli Sekarang</button>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
 import { ref } from 'vue';
 import { supabase } from '../supabase/init'
 import store from '../store/index'
+import axios from 'axios'
 export default {
   
   name: "Home",
@@ -78,8 +90,8 @@ export default {
     // Create data / vars
     const workouts = ref([])
     const dataLoaded = ref(null)
-    const files = ref(null)
     const errorMsg = ref(null)
+    const products = ref([])
     // Get data
     const getWorkouts = async() => {
       try{
@@ -92,13 +104,14 @@ export default {
       }
     }
 
-    const uploadImage = (evt) => {
-      files.value = evt.target.files
+    //get products
+    const getProducts = async() => {
       try{
-        if (files.value[0].size > 500000) {
-          throw new Error("File cannot more than 500kb")
-        }
-        
+        const {data, error} = await supabase
+        .from('products')
+        .select('*')
+        if (error) throw error
+        products.value = data
       } catch (error) {
         errorMsg.value = error.message
         setTimeout(() => {
@@ -106,9 +119,75 @@ export default {
         }, 5000);
       }
     }
+    const makeOrder = async() => {
+      try{
+        const {data, error} =  await axios.post('https://api.sandbox.midtrans.com/v2/charge', {
+          payment_type: "bank_transfer",
+          transaction_details: {
+              gross_amount: 44000,
+              order_id: "09a64611-ed1d-40bd-b883-f9fc3c999269"
+          },
+          customer_details: {
+              email: "noreply@example.com",
+              first_name: "budi",
+              last_name: "utomo",
+              phone: "+6281 1234 1234"
+          },
+          item_details: [
+          {
+            id: "item01",
+            price: 21000,
+            quantity: 1,
+            name: "Ayam Zozozo"
+          },
+          {
+            id: "item02",
+            price: 23000,
+            quantity: 1,
+            name: "Ayam Xoxoxo"
+          }
+        ],
+        bank_transfer:{
+          bank: "bca",
+          va_number: "12345678901",
+          free_text: {
+                inquiry: [
+                      {
+                          id: "Your Custom Text in ID language",
+                          en: "Your Custom Text in EN language"
+                      }
+                ],
+                payment: [
+                      {
+                          id: "Your Custom Text in ID language",
+                          en: "Your Custom Text in EN language"
+                      }
+                ]
+          }
+        }
+      }, {
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Authorization': 'Basic U0ItTWlkLXNlcnZlci1RT3laaVdQS3puc3paalpmb05FWHZoMzM6'
+        }
+      })
+      if (error) throw error
+      console.log(data)
+      } catch (error) {
+        console.log(error)
+        errorMsg.value = error
+        setTimeout(() => {
+          errorMsg.value = false
+        }, 5000);
+      }
+      
+    }
     // Run data function
     getWorkouts()
-    return {workouts, dataLoaded, uploadImage, errorMsg};
+    getProducts()
+    return {workouts, products, dataLoaded, errorMsg, makeOrder};
   },
 };
 </script>
