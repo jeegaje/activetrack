@@ -19,7 +19,11 @@ export default {
     // Create data / vars
     const appReady = ref(null)
     // Check to see if user is already logged in
-    const user = supabase.auth.user()
+    const checkUser = async() => {
+      const { data: { user } } = await supabase.auth.getUser()
+      return user
+    }
+    const user = checkUser()
     
     // If user does not exist, need to make app ready
     if (!user){

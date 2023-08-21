@@ -71,7 +71,7 @@
           <h2 class="font-semibold mb-5">{{ item.name }}</h2>
           <p>{{ item.description }}</p>
           <p>Price : {{ item.price }}</p>
-          <button class="bg-green-500 px-10 py-2 bg-green-500 rounded-lg font-semibold text-white mt-5" @click="makeOrder">Beli Sekarang</button>
+          <button class="bg-green-500 px-10 py-2 bg-green-500 rounded-lg font-semibold text-white mt-5" @click="makeOrder(item.name, item.price)">Beli Sekarang</button>
         </div>
       </div>
     </div>
@@ -82,6 +82,7 @@ import { ref } from 'vue';
 import { supabase } from '../supabase/init'
 import store from '../store/index'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid';
 export default {
   
   name: "Home",
@@ -119,33 +120,28 @@ export default {
         }, 5000);
       }
     }
-    const makeOrder = async() => {
+    console.log(store.methods.getUser())
+    const makeOrder = async(name, price) => {
       try{
-        const {data, error} =  await axios.post('https://api.sandbox.midtrans.com/v2/charge', {
+        const {data, error} =  await axios.post('https://active-track-be.vercel.app/make-transaction', {
           payment_type: "bank_transfer",
           transaction_details: {
-              gross_amount: 44000,
-              order_id: "09a64611-ed1d-40bd-b883-f9fc3c999269"
+              gross_amount: price,
+              order_id: uuidv4()
           },
           customer_details: {
-              email: "noreply@example.com",
+              email: store.methods.getUser().email,
               first_name: "budi",
               last_name: "utomo",
-              phone: "+6281 1234 1234"
+              phone: store.methods.getUser().phone
           },
           item_details: [
           {
             id: "item01",
-            price: 21000,
+            price: price,
             quantity: 1,
-            name: "Ayam Zozozo"
+            name: name
           },
-          {
-            id: "item02",
-            price: 23000,
-            quantity: 1,
-            name: "Ayam Xoxoxo"
-          }
         ],
         bank_transfer:{
           bank: "bca",

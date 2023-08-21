@@ -41,7 +41,7 @@ export default {
     const errorMsg = ref(null)
     // Login function
     const login = async () => {
-      const { error } = await supabase.auth.signIn({
+      const { error } = await supabase.auth.signInWithPassword({
         email: email.value,
         password: password.value,
       })

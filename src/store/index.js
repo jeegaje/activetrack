@@ -10,7 +10,11 @@ const methods = {
     },
     getUserId(){
         return state.user.id
+    },
+    getUser(){
+        return state.user
     }
+
 };
 
 export default {
