@@ -75,6 +75,22 @@
         </div>
       </div>
     </div>
+
+    <div class="container p-8 mb-8 bg-light-grey rounded-md shadow-lg">
+      <h1 class="mb-1 text-lg font-bold text-at-light-green">My Order</h1>
+      <div class="flex flex-col">
+        <div class="p-5 bg-white m-1 rounded-lg" v-for="(item, index) in orders" :key="index">
+          <p>Order Id :: {{ item.id }}</p>
+          <p v-if="item.transaction_history.transaction_status == 'pending'" >Charge Now !! <br>VA Number :: {{ item.transaction_history.va_numbers[0].va_number }} {{ item.transaction_history.va_numbers[0].bank }}</p>
+          <p v-if="item.transaction_history.transaction_status == 'settlement'" >Charge Success !!</p>
+
+          <button v-if="item.transaction_history.transaction_status == 'settlement'" class="bg-green-500 rounded-lg py-2 px-8 text-white font-semibold">{{ item.transaction_history.transaction_status }}</button>
+          <button v-if="item.transaction_history.transaction_status == 'pending'" class="bg-yellow-500 rounded-lg py-2 px-8 text-white font-semibold">{{ item.transaction_history.transaction_status }}</button>
+          <button v-if="item.transaction_history.transaction_status == 'expire'" class="bg-red-500 rounded-lg py-2 px-8 text-white font-semibold">{{ item.transaction_history.transaction_status }}</button>
+
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
@@ -93,6 +109,7 @@ export default {
     const dataLoaded = ref(null)
     const errorMsg = ref(null)
     const products = ref([])
+    const orders = ref([])
     // Get data
     const getWorkouts = async() => {
       try{
@@ -120,6 +137,23 @@ export default {
         }, 5000);
       }
     }
+
+    //get products
+    const getOrders = async() => {
+      try{
+        const {data, error} = await supabase
+        .from('orders')
+        .select('*')
+        if (error) throw error
+        orders.value = data
+      } catch (error) {
+        errorMsg.value = error.message
+        setTimeout(() => {
+          errorMsg.value = false
+        }, 5000);
+      }
+    }
+    
     console.log(store.methods.getUser())
     const makeOrder = async(name, price) => {
       try{
@@ -183,7 +217,8 @@ export default {
     // Run data function
     getWorkouts()
     getProducts()
-    return {workouts, products, dataLoaded, errorMsg, makeOrder};
+    getOrders()
+    return {workouts, products, orders, dataLoaded, errorMsg, makeOrder};
   },
 };
 </script>
