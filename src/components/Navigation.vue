@@ -11,6 +11,8 @@
         <div class="flex flex-row text-sm">
           <router-link class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Home'}">Home</router-link>
           <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Create'}">Create</router-link>
+          <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'SellProduct'}">Sell Product</router-link>
+
           <router-link v-if="!user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Login' }">Login</router-link>
           <a  v-if="user" @click="logout" href="#responsive-header" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
             Logout
@@ -38,7 +40,7 @@ export default {
         // Logout function
         const logout = async () => {
           await supabase.auth.signOut()
-          router.push({ name: 'Home'})
+          router.replace({ name: 'Home'})
         }
         return {logout, user};
     },

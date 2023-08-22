@@ -4,6 +4,8 @@ import Login from "../views/Login.vue"
 import Register from "../views/Register.vue"
 import Create from "../views/Create.vue"
 import WorkoutView from "../views/ViewWorkout.vue"
+import SellProduct from "../views/SellProduct.vue"
+import Dashboard from "../views/Dashboard.vue"
 
 const routes = [
   {
@@ -27,9 +29,19 @@ const routes = [
     component: Create,
   },
   {
+    path: "/sell-product",
+    name: "SellProduct",
+    component: SellProduct,
+  },
+  {
     path: "/workout/:id",
     name: "Workout View",
     component: WorkoutView,
+  },
+  {
+    path: "/dashboard",
+    name: "Dashboard View",
+    component: Dashboard,
   },
 ];
 
