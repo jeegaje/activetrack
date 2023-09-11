@@ -177,9 +177,6 @@ export default {
     getProducts()
     getOrders()
     return {workouts, products, orders, dataLoaded, errorMsg, makeOrder};
-  },
-  beforeCreate() {
-    console.log("hai");
   }
 };
 </script>
