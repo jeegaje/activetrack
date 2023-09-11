@@ -51,7 +51,7 @@ export default {
           errorMsg.value = null
         }, 5000);
       } else {
-        router.push({name: 'Home'})
+        router.push({name: 'Dashboard View'})
       }
     }
     return {email, password, errorMsg, login};

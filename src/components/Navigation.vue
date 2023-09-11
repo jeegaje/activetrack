@@ -9,7 +9,9 @@
 
       <div class="flex flex-row">
         <div class="flex flex-row text-sm">
-          <router-link class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Home'}">Home</router-link>
+          <router-link v-if="!user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Home'}">Home</router-link>
+          <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Dashboard View'}">Dashboard</router-link>
+
           <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Create'}">Create</router-link>
           <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'SellProduct'}">Sell Product</router-link>
 

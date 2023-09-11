@@ -6,6 +6,8 @@ import Create from "../views/Create.vue"
 import WorkoutView from "../views/ViewWorkout.vue"
 import SellProduct from "../views/SellProduct.vue"
 import Dashboard from "../views/Dashboard.vue"
+import store from '../store/index'
+
 
 const routes = [
   {
@@ -53,5 +55,12 @@ const router = createRouter({
 // Change document titles
 
 // Route guard for auth routes
-
+router.beforeEach((to,from, next)=> {
+  const isAuth = store.methods.getUser() != null ? true : false;
+  if (isAuth || to.name == 'Home' || to.name == 'Login' || to.name == 'Register') {
+    next();
+  } else {
+    next('/login')
+  }
+});
 export default router;
