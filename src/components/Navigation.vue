@@ -1,22 +1,21 @@
 <template>
   <header>
-    <nav class="flex items-center justify-between flex-wrap bg-green-400 p-6">
+    <nav class="flex items-center justify-between flex-wrap p-6">
       
       <div class="flex items-center flex-shrink-0 mr-6">
-        <img class="w-14 mr-4" src="../assets/images/dumbbell-light.png" alt="">
-        <h1 class="font-semibold text-xl text-white">Active Tracker</h1>
+        <h1 class="font-semibold text-xl ">Active Tracker</h1>
       </div>
 
       <div class="flex flex-row">
         <div class="flex flex-row text-sm">
-          <router-link v-if="!user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Home'}">Home</router-link>
-          <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Dashboard View'}">Dashboard</router-link>
+          <router-link v-if="!user" class="block lg:inline-block lg:mt-0 text-teal-200 py-2 px-5 mr-4" :to="{ name: 'Home'}">Home</router-link>
+          <router-link v-if="user" class="block lg:inline-block lg:mt-0 text-teal-200 py-2 px-5 mr-4" :to="{ name: 'Dashboard View'}">Dashboard</router-link>
 
-          <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Create'}">Create</router-link>
-          <router-link v-if="user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'SellProduct'}">Sell Product</router-link>
+          <router-link v-if="user" class="block lg:inline-block lg:mt-0 text-teal-200 py-2 px-5 mr-4" :to="{ name: 'Create'}">Create</router-link>
+          <router-link v-if="user" class="block lg:inline-block lg:mt-0 text-teal-200 py-2 px-5 mr-4" :to="{ name: 'SellProduct'}">Sell Product</router-link>
 
-          <router-link v-if="!user" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" :to="{ name: 'Login' }">Login</router-link>
-          <a  v-if="user" @click="logout" href="#responsive-header" class="block text-white font-semibold lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+          <router-link v-if="!user" class="block lg:inline-block lg:mt-0 text-teal-200 py-2 px-5 mr-4 border border-black rounded-full" :to="{ name: 'Login' }">Login</router-link>
+          <a  v-if="user" @click="logout" href="#responsive-header" class="block lg:inline-block lg:mt-0 text-teal-200 py-2 px-5 mr-4 border border-black rounded-full">
             Logout
           </a>
         </div>
